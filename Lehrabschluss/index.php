@@ -15,7 +15,32 @@ include 'Classes/DatabaseHandler.classes.php';
 </head>
 <body>
 
-<?php ?>
+<?php
+function renderOptions($tableNames) {
+    foreach ($tableNames as $tableName) {
+        echo '<option value="' . htmlspecialchars($tableName) . '">' . htmlspecialchars($tableName) . '</option>';
+    }
+}
+
+function renderForm($result) {
+    $entityCounter = 1;
+    foreach ($result as $row) {
+        echo '<p><strong>Eintrag: ' . $entityCounter . '</strong></p>';
+        echo '<div class="container">';
+        foreach ($row as $field => $value) {
+            echo '<div class="col-md-6">';
+            echo '<div class="form-group">';
+            echo '<label for="' . htmlspecialchars($field) . '">' . htmlspecialchars($field) . '</label>';
+            echo '<input type="text" class="form-control" id="' . htmlspecialchars($field) . '" name="' . htmlspecialchars($field) . '" value="' . htmlspecialchars($value) . '">';
+            echo '</div>';
+            echo '</div>';
+        }
+        echo '</div>';
+        echo '<hr>'; // Separator between each row's data
+        $entityCounter++;
+    }
+}
+?>
 
 <div class="container">
     <h1>Tabellenselektor</h1>
@@ -28,9 +53,7 @@ include 'Classes/DatabaseHandler.classes.php';
                 <?php
                 $db = new DatabaseHandler();                    
                 $tableNames = $db->getTableNames();
-                foreach ($tableNames as $tableName) {
-                    echo '<option value="' . htmlspecialchars($tableName) . '">' . htmlspecialchars($tableName) . '</option>';
-                }                    
+                renderOptions($tableNames);
                 ?>
             </select><br>
             <button type="submit" class="btn btn-primary">Auswählen</button>
@@ -38,43 +61,20 @@ include 'Classes/DatabaseHandler.classes.php';
     </form>
 </div>
 
-<!-- zweite Form bauen, welche alle Column_Names und die Values ausgibt !-->
-
 <div class="container">
     <h1>Ergebnis</h1>
 
     <!-- DB für alle Table Names ansprechen -->
     <form action="" method="POST">
         <div class="form-group">
-            <label for="tablenames2"><?php $tableName = $_GET["tablenames"]; echo $tableName;?></label><br>
+            <label for="tablenames2"><?php $tableName = htmlspecialchars($_GET["tablenames"]); echo $tableName; ?></label><br>
             <?php
-
             $result = $db->fetchTableNameData($tableName);
-                    
-            $entityCounter = 1;
-            foreach ($result as $row) 
-            { 
-                echo '<p>' . " Eintrag: ". $entityCounter.  '<p>';
-                echo '<div class="container">'; 
-                foreach ($row as $field => $value) 
-                { 
-                    echo '<div class="col-md-6">'; 
-                    echo '<div class="form-group">'; 
-                    echo '<label for="' . htmlspecialchars($field) . '">' . htmlspecialchars($field) . '</label>'; 
-                    echo '<input type="text" class="form-control" id="' . htmlspecialchars($field) . '" name="' . 
-                    htmlspecialchars($field) . '" value="' . htmlspecialchars($value) . '">'; 
-                    echo '</div>'; 
-                    echo '</div>'; 
-                } 
-                echo '</div>'; 
-                echo '<hr>'; // Add a separator between each row's data }
-                $entityCounter++;
-            }
+            renderForm($result);
             ?>
         </div>
     </form>
 </div>
-
 
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
