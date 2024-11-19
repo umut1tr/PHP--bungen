@@ -1,0 +1,118 @@
+Entitäten:
+Gäste: Die Personen, die im Hotel übernachten.
+
+Zimmer: Die Zimmer, die im Hotel zur Verfügung stehen.
+
+Reservierung: Die Buchungen, die Gäste für die Zimmer machen.
+
+Personal: Die Mitarbeiter, die im Hotel arbeiten.
+
+Dienstleistungen: Zusätzliche Dienstleistungen, die das Hotel anbietet (z.B. Zimmerservice, Spa).
+
+Beziehungen:
+Ein Gast kann viele Reservierungen haben.
+
+Ein Zimmer kann viele Reservierungen haben.
+
+Eine Reservierung ist für genau einen Gast und ein Zimmer.
+
+Ein Mitarbeiter kann viele Dienstleistungen erbringen.
+
+Ein Gast kann viele Dienstleistungen in Anspruch nehmen.
+
+Diagrammbeschreibung:
+Gäste:
+
+Attribute: GastID (Primärschlüssel), Name, Adresse, Email, Telefonnummer
+
+Zimmer:
+
+Attribute: ZimmerID (Primärschlüssel), Zimmernummer, Zimmerkategorie, Preis
+
+Reservierung:
+
+Attribute: ReservierungsID (Primärschlüssel), GastID (Fremdschlüssel), ZimmerID (Fremdschlüssel), CheckInDatum, CheckOutDatum
+
+Personal:
+
+Attribute: PersonalID (Primärschlüssel), Name, Position, Gehalt
+
+Dienstleistungen:
+
+Attribute: DienstleistungID (Primärschlüssel), Beschreibung, Preis
+
+Beziehungen:
+Gäste ⟷ Reservierung: Ein Gast kann viele Reservierungen haben (1:n).
+
+Zimmer ⟷ Reservierung: Ein Zimmer kann viele Reservierungen haben (1:n).
+
+Reservierung ⟷ Gäste und Zimmer: Eine Reservierung ist für genau einen Gast und ein Zimmer (n:1).
+
+Personal ⟷ Dienstleistungen: Ein Mitarbeiter kann viele Dienstleistungen erbringen (1:n).
+
+Gäste ⟷ Dienstleistungen: Ein Gast kann viele Dienstleistungen in Anspruch nehmen (1:n).
+
+
+
+-- Gäste Tabelle
+CREATE TABLE Gäste (
+    GastID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Adresse VARCHAR(255),
+    Email VARCHAR(100) NOT NULL UNIQUE,
+    Telefonnummer VARCHAR(20),
+    Passwort VARCHAR(255) NOT NULL
+);
+
+-- Zimmer Tabelle
+CREATE TABLE Zimmer (
+    ZimmerID INT AUTO_INCREMENT PRIMARY KEY,
+    Zimmernummer VARCHAR(10) NOT NULL UNIQUE,
+    Zimmerkategorie VARCHAR(50),
+    Preis DECIMAL(10, 2)
+);
+
+-- Reservierung Tabelle
+CREATE TABLE Reservierung (
+    ReservierungsID INT AUTO_INCREMENT PRIMARY KEY,
+    GastID INT,
+    ZimmerID INT,
+    CheckInDatum DATE,
+    CheckOutDatum DATE,
+    FOREIGN KEY (GastID) REFERENCES Gäste(GastID),
+    FOREIGN KEY (ZimmerID) REFERENCES Zimmer(ZimmerID)
+);
+
+-- Personal Tabelle
+CREATE TABLE Personal (
+    PersonalID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Position VARCHAR(50),
+    Gehalt DECIMAL(10, 2)
+);
+
+-- Dienstleistungen Tabelle
+CREATE TABLE Dienstleistungen (
+    DienstleistungID INT AUTO_INCREMENT PRIMARY KEY,
+    Beschreibung VARCHAR(255),
+    Preis DECIMAL(10, 2)
+);
+
+-- Gäste-Dienstleistungen Beziehungstabelle
+CREATE TABLE Gäste_Dienstleistungen (
+    GastID INT,
+    DienstleistungID INT,
+    PRIMARY KEY (GastID, DienstleistungID),
+    FOREIGN KEY (GastID) REFERENCES Gäste(GastID),
+    FOREIGN KEY (DienstleistungID) REFERENCES Dienstleistungen(DienstleistungID)
+);
+
+-- Personal-Dienstleistungen Beziehungstabelle
+CREATE TABLE Personal_Dienstleistungen (
+    PersonalID INT,
+    DienstleistungID INT,
+    PRIMARY KEY (PersonalID, DienstleistungID),
+    FOREIGN KEY (PersonalID) REFERENCES Personal(PersonalID),
+    FOREIGN KEY (DienstleistungID) REFERENCES Dienstleistungen(DienstleistungID)
+);
+
