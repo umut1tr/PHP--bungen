@@ -63,7 +63,7 @@ function renderForm($result) {
 
 <div class="container">
     <h1>Ergebnis</h1>
-
+    
     <!-- DB für alle Table Names ansprechen -->
     <form action="" method="POST">
         <div class="form-group">

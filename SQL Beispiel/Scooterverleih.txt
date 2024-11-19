@@ -1,0 +1,83 @@
+Entitäten:
+Benutzer: Personen, die E-Scooter mieten.
+
+E-Scooter: Die E-Scooter, die verliehen werden.
+
+Mietvertrag: Die Vereinbarung zwischen Benutzer und E-Scooter.
+
+Standort: Die Orte, an denen E-Scooter abgehoben und abgegeben werden können.
+
+Zahlung: Die Zahlungsinformationen für die Miete.
+
+Beziehungen:
+Benutzer hat viele Mietverträge.
+
+Mietvertrag hat genau einen Benutzer und genau einen E-Scooter.
+
+E-Scooter hat viele Mietverträge.
+
+Mietvertrag hat genau einen Standort.
+
+Benutzer hat viele Zahlungen.
+
+Mietvertrag hat viele Zahlungen.
+
+Hier ist ein einfaches ERD basierend auf diesen Entitäten und Beziehungen:
+
+
+
+-- Benutzer Tabelle
+CREATE TABLE Benutzer (
+    BenutzerID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Email VARCHAR(100) NOT NULL UNIQUE,
+    Telefon VARCHAR(20),
+    Passwort VARCHAR(255) NOT NULL
+);
+
+-- E-Scooter Tabelle
+CREATE TABLE EScooter (
+    ScooterID INT AUTO_INCREMENT PRIMARY KEY,
+    StandortID INT,
+    Standort VARCHAR(100),
+    Batteriestatus INT,
+    Status ENUM('available', 'in-use', 'maintenance') DEFAULT 'available'
+);
+
+-- Mietvertrag Tabelle
+CREATE TABLE Mietvertrag (
+    MietvertragID INT AUTO_INCREMENT PRIMARY KEY,
+    BenutzerID INT,
+    ScooterID INT,
+    StandortID INT,
+    StartZeit TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    EndZeit TIMESTAMP,
+    FOREIGN KEY (BenutzerID) REFERENCES Benutzer(BenutzerID),
+    FOREIGN KEY (ScooterID) REFERENCES EScooter(ScooterID),
+    FOREIGN KEY (StandortID) REFERENCES Standort(StandortID)
+);
+
+-- Standort Tabelle
+CREATE TABLE Standort (
+    StandortID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(100),
+    Adresse VARCHAR(255)
+);
+
+-- Zahlung Tabelle
+CREATE TABLE Zahlung (
+    ZahlungID INT AUTO_INCREMENT PRIMARY KEY,
+    MietvertragID INT,
+    Betrag DECIMAL(10, 2),
+    Zahlungsmethode VARCHAR(50),
+    Zahlungszeit TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (MietvertragID) REFERENCES Mietvertrag(MietvertragID)
+);
+
+-- Insert Beispiel Standorte
+INSERT INTO Standort (Name, Adresse) VALUES ('Standort A', 'Adresse A');
+INSERT INTO Standort (Name, Adresse) VALUES ('Standort B', 'Adresse B');
+
+-- Insert Beispiel E-Scooter
+INSERT INTO EScooter (StandortID, Standort, Batteriestatus, Status) VALUES (1, 'Standort A', 100, 'available');
+INSERT INTO EScooter (StandortID, Standort, Batteriestatus, Status) VALUES (2, 'Standort B', 80, 'maintenance');
